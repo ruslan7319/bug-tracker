@@ -1,14 +1,18 @@
 pipeline {
     agent any
 
+    tools {
+        go 'Go 1.26.1' // use same define in contol setting
+    }
+
     stages {
         stage('Unit Test - Backend') {
-            agent {
-                docker{
-                    image 'snakee/golang-junit:1.21'
-                    reuseNode true
-                }
-            }
+            //agent {
+                //docker{
+                   // image 'snakee/golang-junit:1.21'
+                    //reuseNode true
+                //}
+            //}
             steps {
                 dir ('bugtracker-backend'){
                     sh 'go test ./... -v'
