@@ -17,7 +17,7 @@ pipeline {
                 dir ('bugtracker-backend'){
                     // Ensure the go-junit-report tool is available.
                     // sh 'go install github.com/jstemmer/go-junit-report/v2@latest'
-                    sh '{GOROOT}/bin/go install github.com/jstemmer/go-junit-report@latest'
+                    sh '${GOROOT}/bin/go install github.com/jstemmer/go-junit-report@latest'
                     // Run the Go tests, pipe the output through go-junit-report, and save it to an XML file.
                     // '2>&1' redirects stderr to stdout so all output is captured.
                     sh 'go test -v ./... 2>&1 | ${GOROOT}/bin/bin/go-junit-report -set-exit-code > test-report.xml'
