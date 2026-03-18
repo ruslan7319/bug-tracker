@@ -19,5 +19,19 @@ pipeline {
                 }
             }
         }
+        stage ('Unit Test - FrontEnd') {
+            agent {
+                docker {
+                    image 'node:20-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                dir ('bugtracker-fronend'){
+                    sh 'npm -v'
+                }
+
+            }
+        }
     }
 }
