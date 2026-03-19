@@ -26,6 +26,7 @@ pipeline {
                     sh 'go tool -html=coverage.out  -o coverage.html'
                     sh 'mkdir -p reports'
                     sh 'mv coverage.html reports/'
+                    sh 'ls -R bugtracker-backend/reports'
                 }
             }
             post {
