@@ -24,9 +24,11 @@ pipeline {
                     //Geneate coverage report
                     sh 'go test -coverprofile=coverage.out -covermode=atomic ./...'
                     sh 'go tool cover -html=coverage.out -o coverage.html'
-                    sh 'mkdir -p reports'
-                    sh 'mv coverage.html reports/'
-                    sh 'ls -R bugtracker-backend/reports'
+                    sh '''
+                        mkdir -p bugtracker-backend/reports
+                        mv coverage.html bugtracker-backend/reports/
+                        ls -R bugtracker-backend/reports
+                    '''
                 }
             }
             post {
