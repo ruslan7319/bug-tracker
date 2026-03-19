@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        state ("Unit Test"){
+        stage ("Unit Test"){
             parallel {
                     stage('Unit Test - Backend') {
 
