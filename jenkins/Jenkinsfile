@@ -6,55 +6,93 @@ pipeline {
     }
 
     stages {
-        stage('Unit Test - Backend') {
-            //agent {
-                //docker{
-                   // image 'snakee/golang-junit:1.21'
-                    //reuseNode true
-                //}
-            //}
-            steps {
-                dir ('bugtracker-backend'){
-                    // Ensure the go-junit-report tool is available.
-                     sh 'go install github.com/jstemmer/go-junit-report/v2@latest'
-                    // Run the Go tests, pipe the output through go-junit-report, and save it to an XML file.
-                    // '2>&1' redirects stderr to stdout so all output is captured.
-                    //sh 'go test ./... -v'
-                    sh "export PATH=\$PATH:\$(go env GOPATH)/bin && go test -v ./... | go-junit-report > test-report.xml"
-                    //Geneate coverage report
-                    sh 'go test -coverprofile=coverage.out -covermode=atomic ./...'
-                    sh 'go tool cover -html=coverage.out -o coverage.html'
-                    sh '''
-                        mkdir -p bugtracker-backend/reports
-                        mv coverage.html bugtracker-backend/reports/
-                        ls -R bugtracker-backend/reports
-                    '''
-                }
-            }
-            post {
-                always {
-                    junit 'bugtracker-backend/test-report.xml'
-                    publishHTML target:[
-                        reportDir: 'bugtracker-backend/reports',
-                        reportFiles: 'coverage.html',
-                        reportName: 'Backend Coverege Report'
-                    ]
-                }
-            }
-        }
-        stage ('Unit Test - FrontEnd') {
-            agent {
-                docker {
-                    image 'node:20-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                dir ('bugtracker-fronend'){
-                    sh 'npm -v'
-                }
+        state ("Unit Test"){
+            parallel {
+                    stage('Unit Test - Backend') {
 
+                        steps {
+                            dir ('bugtracker-backend'){
+                                // Ensure the go-junit-report tool is available.
+                                sh 'go install github.com/jstemmer/go-junit-report/v2@latest'
+                                sh "export PATH=\$PATH:\$(go env GOPATH)/bin && go test -v ./... | go-junit-report > test-report.xml"
+                                //Geneate coverage report
+                                sh 'go test -coverprofile=coverage.out -covermode=atomic ./...'
+                                sh 'go tool cover -html=coverage.out -o coverage.html'
+                                sh '''
+                                    mkdir -p bugtracker-backend/reports
+                                    mv coverage.html bugtracker-backend/reports/
+                                    ls -R bugtracker-backend/reports
+                                '''
+                            }
+                        }
+                        post {
+                            always {
+                                junit 'bugtracker-backend/test-report.xml'
+                                publishHTML target:[
+                                    reportDir: 'bugtracker-backend/reports',
+                                    reportFiles: 'coverage.html',
+                                    reportName: 'Backend Coverege Report'
+                                ]
+                            }
+                        }
+                    }
+                    stage ('Unit Test - FrontEnd') {
+                        agent {
+                            docker {
+                                image 'node:20-alpine'
+                                reuseNode true
+                            }
+                        }
+                        steps {
+                            dir ('bugtracker-fronend'){
+                                sh 'npm -v'
+                            }
+
+                        }
+                    }
             }
         }
+        // stage('Unit Test - Backend') {
+
+        //     steps {
+        //         dir ('bugtracker-backend'){
+        //             // Ensure the go-junit-report tool is available.
+        //              sh 'go install github.com/jstemmer/go-junit-report/v2@latest'
+        //             sh "export PATH=\$PATH:\$(go env GOPATH)/bin && go test -v ./... | go-junit-report > test-report.xml"
+        //             //Geneate coverage report
+        //             sh 'go test -coverprofile=coverage.out -covermode=atomic ./...'
+        //             sh 'go tool cover -html=coverage.out -o coverage.html'
+        //             sh '''
+        //                 mkdir -p bugtracker-backend/reports
+        //                 mv coverage.html bugtracker-backend/reports/
+        //                 ls -R bugtracker-backend/reports
+        //             '''
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             junit 'bugtracker-backend/test-report.xml'
+        //             publishHTML target:[
+        //                 reportDir: 'bugtracker-backend/reports',
+        //                 reportFiles: 'coverage.html',
+        //                 reportName: 'Backend Coverege Report'
+        //             ]
+        //         }
+        //     }
+        // }
+        // stage ('Unit Test - FrontEnd') {
+        //     agent {
+        //         docker {
+        //             image 'node:20-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         dir ('bugtracker-fronend'){
+        //             sh 'npm -v'
+        //         }
+
+        //     }
+        // }
     }
 }
