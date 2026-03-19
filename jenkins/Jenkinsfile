@@ -19,7 +19,8 @@ pipeline {
                      sh 'go install github.com/jstemmer/go-junit-report/v2@latest'
                      //sh "echo 'export PATH=\$PATH:\$(go env GOPATH)/bin' >> ~/.zshrc"
                      //sh "source ~/.zshrc"
-                     sh "go test -v ./... 2>&1 | go-junit-report > test-report.xml"
+                     //sh "go test -v ./... 2>&1 | go-junit-report > test-report.xml"
+                     sh "export PATH=\$PATH:\$(go env GOPATH)/bin && go test -v ./... | go-junit-report > test-report.xml"
                     //sh '${GOROOT}/bin/go install github.com/jstemmer/go-junit-report@latest'
                     // Run the Go tests, pipe the output through go-junit-report, and save it to an XML file.
                     // '2>&1' redirects stderr to stdout so all output is captured.
