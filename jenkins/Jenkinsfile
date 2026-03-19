@@ -21,11 +21,21 @@ pipeline {
                     // '2>&1' redirects stderr to stdout so all output is captured.
                     //sh 'go test ./... -v'
                     sh "export PATH=\$PATH:\$(go env GOPATH)/bin && go test -v ./... | go-junit-report > test-report.xml"
+                    //Geneate coverage report
+                    sh 'go test -coverprofile=coverage.out -covermode=atomic ./...'
+                    sh 'go tool -html=coverage.out  -o coverage.html'
+                    sh 'mkdir -p reports'
+                    sh 'mv coverage.html reports/'
                 }
             }
             post {
                 always {
                     junit 'bugtracker-backend/test-report.xml'
+                    publishHTML target:[
+                        reportDir: 'bugtracker-backend/reports'
+                        reportFiles: 'coverage.html'
+                        reportName: 'Backend Coverege Report'
+                    ]
                 }
             }
         }
