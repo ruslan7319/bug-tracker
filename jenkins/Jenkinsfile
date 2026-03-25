@@ -75,7 +75,7 @@ pipeline {
                             }
                         }
                         steps{
-                            dir 'tests-api' {
+                            dir ('tests-api') {
                                 // wait until app is ready 
                                 sh 'npx wait-port http://localhost:8080/api/health -t 60000'
                                 sh 'npm ci'
